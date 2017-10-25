@@ -3,6 +3,8 @@
 import json
 import requests
 import click
+import os
+
 
 @click.command()
 @click.option("--config",
@@ -29,4 +31,6 @@ def cfssl_refresh_cert(config):
 
     with open(config["output"]["key"], "w") as fp:
         fp.write(r["result"]["private_key"])
+
+    os.chmod(config["output"]["key"], 0600)
 
