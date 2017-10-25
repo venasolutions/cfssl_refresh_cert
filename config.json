@@ -11,6 +11,9 @@
         }
       ],
       "CN": "testpost",
+      "hosts": [
+        "testpost.com"
+      ],
       "expiry": "876000h"
     }
   },
