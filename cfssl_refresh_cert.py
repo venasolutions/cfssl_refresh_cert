@@ -9,7 +9,7 @@ import click
               help="json configuration file",
               required=True)
 def cfssl_refresh_cert(config):
-    """Get new certificate, key, and bundle from cfssl server."""
+    """Get new certificate and key from cfssl server."""
     with open(config) as fp:
         config = json.load(fp)
 

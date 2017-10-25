@@ -1,6 +1,6 @@
 # cfssl_refresh_cert #
 
-Get new certificate, key, and bundle from cfssl server.
+Get new certificate and key from cfssl server.
 
 Suitable for cron:
 
