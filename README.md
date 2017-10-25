@@ -32,3 +32,11 @@ Example config.json:
         "key": "server-key.pem"
       }
     }
+
+Add the "auth" entry in cfssl to use HTTP basic auth:
+
+    "auth": {
+        "user": "test",
+        "password": "passwd"
+    },
+

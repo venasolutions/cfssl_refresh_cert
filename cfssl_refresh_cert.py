@@ -21,7 +21,13 @@ def cfssl_refresh_cert(config):
 
     url = "{}/api/v1/cfssl/newcert".format(config["cfssl"]["url"])
 
-    resp = requests.post(url, json=d)
+    kwargs = {}
+
+    if "auth" in config["cfssl"]:
+        kwargs["auth"] = (config["cfssl"]["auth"]["user"],
+                config["cfssl"]["auth"]["password"])
+
+    resp = requests.post(url, json=d, **kwargs)
     resp.raise_for_status()
 
     r = resp.json()
