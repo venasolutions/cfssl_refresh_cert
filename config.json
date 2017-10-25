@@ -1,0 +1,21 @@
+{
+  "cfssl": {
+    "url": "http://127.0.0.1:8888",
+    "request": {
+      "names": [
+        {
+          "C": "Canada",
+          "ST": "Ontario",
+          "L": "Toronto",
+          "O": "Fake org."
+        }
+      ],
+      "CN": "testpost",
+      "expiry": "876000h"
+    }
+  },
+  "output": {
+    "cert": "server.pem",
+    "key": "server-key.pem"
+  }
+}
