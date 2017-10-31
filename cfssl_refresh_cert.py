@@ -1,21 +1,30 @@
 #!/usr/bin/env python
 
 import json
+import os
 import requests
 import click
-import os
 
 
 class CFSSLRefreshCert(object):
+    """Automate refreshing SSL certificates from a CFSSL server."""
     def __init__(self):
         self.config = None
 
     def read_config_from_file(self, config_filename):
+        """Configure class object using JSON configuration file."""
         with open(config_filename) as filep:
             self.config = json.load(filep)
 
     def refresh_cert_and_key(self):
-        """Ask cfssl server for new cert and key."""
+        """
+        Ask CFSSL server for new cert and key, write to configured paths.
+
+        POSTs to a CFSSL server to retrieve a new certificate and private key.
+        Writes those to paths specified in the configuration file.
+
+        Returns true if successful, false if not.
+        """
         d = {
             "request": self.config["cfssl"]["request"]
         }
@@ -26,12 +35,12 @@ class CFSSLRefreshCert(object):
 
         if "auth" in self.config["cfssl"]:
             kwargs["auth"] = (self.config["cfssl"]["auth"]["user"],
-                    self.config["cfssl"]["auth"]["password"])
+                              self.config["cfssl"]["auth"]["password"])
 
         try:
             resp = requests.post(url, json=d, **kwargs)
             resp.raise_for_status()
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             print "cfssl refresh failed! {}".format(e)
             return False
 
@@ -62,4 +71,3 @@ def cfssl_refresh_cert_cli(config):
     refresher.read_config_from_file(config)
     if not refresher.refresh_cert_and_key():
         exit(1)
-
