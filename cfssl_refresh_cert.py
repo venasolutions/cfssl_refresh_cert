@@ -109,13 +109,18 @@ class CFSSLRefreshCert(object):
         """Return hostname, private IP, and public IP."""
         hostname = socket.gethostname()
 
+        # Grab the IP used to connect to 8.8.8.8
+        #
+        # Use this instead of `socket.gethostbyname(socket.getfqdn())`, because
+        # that can be affected by entries in /etc/hosts.
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         private_ip_addr = s.getsockname()[0]
         s.close()
 
+        # Ask a public entity what IP is connecting to it.
         public_ip_addr = None
-        resp = requests.get("http://api.ipify.org")
+        resp = requests.get("https://api.ipify.org")
         if resp.status_code == 200:
             public_ip_addr = resp.text
 
