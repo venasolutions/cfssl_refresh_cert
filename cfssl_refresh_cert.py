@@ -40,6 +40,9 @@ class CFSSLRefreshCert(object):
             kwargs["auth"] = (self.config["cfssl"]["auth"]["user"],
                               self.config["cfssl"]["auth"]["password"])
 
+        if "ca_bundle" in self.config["cfssl"]:
+            kwargs["verify"] = self.config["cfssl"]["ca_bundle"]
+
         try:
             resp = requests.post(url, json=d, **kwargs)
             resp.raise_for_status()

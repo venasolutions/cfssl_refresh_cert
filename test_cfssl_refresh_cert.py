@@ -209,7 +209,7 @@ def test_get_machine_info_ok():
         mock_socket_obj.getsockname.return_value = ["private"]
 
         with requests_mock.mock() as m:
-            m.get("http://api.ipify.org", text="public")
+            m.get("https://api.ipify.org", text="public")
 
             machine_info = refresher._get_machine_info()
 
