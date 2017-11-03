@@ -363,6 +363,51 @@ def test_post_to_slack_on_execute_command_fail():
             mock.ANY
         )
 
+def test_ca_bundle():
+    """Test successful certificate refresh."""
+    refresher = CFSSLRefreshCert()
+    refresher.config = {
+        "cfssl": {
+            "url": "http://127.0.0.1:8888",
+            "request": {
+                "CN": "testpost",
+            },
+            "ca_bundle" : "/etc/ssl/certs/ca-certificates.crt"
+        },
+        "output": {
+            "cert": "server.pem",
+            "key": "server-key.pem"
+        }
+    }
+
+    with requests_mock.mock() as m:
+        json_response = {
+            "result": {
+                "certificate": "cfssl cert",
+                "private_key": "cfssl key",
+            }
+        }
+        m.post("http://127.0.0.1:8888/api/v1/cfssl/newcert",
+               json=json_response)
+
+        refresher._write_out_cert_files = mock.MagicMock()
+
+        result = refresher.refresh_cert_and_key()
+        assert result
+
+        # assert POST body is correct
+        assert len(m.request_history) == 1
+        assert m.request_history[0].method == 'POST'
+        assert m.request_history[0].url == \
+            "http://127.0.0.1:8888/api/v1/cfssl/newcert"
+        assert m.request_history[0].text == \
+            json.dumps({"request": {"CN": "testpost"}})
+
+        # assert data is correctly written
+        refresher._write_out_cert_files.assert_called_with("cfssl cert",
+                                                           "cfssl key")
+        req = m.request_history[0]
+        assert req.verify == "/etc/ssl/certs/ca-certificates.crt"
 
 def test_cfssl_cli_ok():
     """Test click functionality with successful refresh."""
