@@ -15,7 +15,8 @@
         "testpost.com"
       ],
       "expiry": "876000h"
-    }
+    },
+    "ca_bundle" : "/etc/ssl/certs/ca-certificates.crt"
   },
   "output": {
     "cert": "server.pem",
