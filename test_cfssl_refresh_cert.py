@@ -79,6 +79,45 @@ def test_cfssl_ok():
                                                            "cfssl key")
 
 
+def test_cfssl_ok_with_profile():
+    """Test successful certificate refresh (non-standard profile)."""
+    refresher = CFSSLRefreshCert()
+    refresher.config = {
+        "cfssl": {
+            "url": "http://127.0.0.1:8888",
+            "request": {
+                "CN": "testpost",
+            },
+            "profile": "non-standard",
+        },
+        "output": {
+            "cert": "server.pem",
+            "key": "server-key.pem"
+        }
+    }
+
+    with requests_mock.mock() as m:
+        json_response = {
+            "result": {
+                "certificate": "cfssl cert",
+                "private_key": "cfssl key",
+            }
+        }
+        m.post("http://127.0.0.1:8888/api/v1/cfssl/newcert",
+               json=json_response)
+
+        refresher._write_out_cert_files = mock.MagicMock()
+
+        result = refresher.refresh_cert_and_key()
+        assert result
+
+        # assert POST body is correct
+        assert len(m.request_history) == 1
+        assert m.request_history[0].text == \
+            json.dumps({"request": {"CN": "testpost"}, "profile":
+                    "non-standard"})
+
+
 def test_cfssl_bad_post():
     """Test unsuccessful certificate refresh."""
     refresher = CFSSLRefreshCert()

@@ -32,6 +32,9 @@ class CFSSLRefreshCert(object):
             "request": self.config["cfssl"]["request"]
         }
 
+        if "profile" in self.config["cfssl"]:
+            d["profile"] = self.config["cfssl"]["profile"]
+
         url = "{}/api/v1/cfssl/newcert".format(self.config["cfssl"]["url"])
 
         kwargs = {}
