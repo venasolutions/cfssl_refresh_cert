@@ -28,12 +28,14 @@ class CFSSLRefreshCert(object):
 
         Returns true if successful, false if not.
         """
-        d = {
-            "request": self.config["cfssl"]["request"]
-        }
+        d = None
 
-        if "profile" in self.config["cfssl"]:
-            d["profile"] = self.config["cfssl"]["profile"]
+        if "post_body" in self.config["cfssl"]:
+            d = self.config["cfssl"]["post_body"]
+        else:
+            d = {
+                "request": self.config["cfssl"]["request"]
+            }
 
         url = "{}/api/v1/cfssl/newcert".format(self.config["cfssl"]["url"])
 

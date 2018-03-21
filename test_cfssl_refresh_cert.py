@@ -79,16 +79,18 @@ def test_cfssl_ok():
                                                            "cfssl key")
 
 
-def test_cfssl_ok_with_profile():
+def test_cfssl_ok_with_post_body():
     """Test successful certificate refresh (non-standard profile)."""
     refresher = CFSSLRefreshCert()
     refresher.config = {
         "cfssl": {
             "url": "http://127.0.0.1:8888",
-            "request": {
-                "CN": "testpost",
-            },
-            "profile": "non-standard",
+            "post_body": {
+                "request": {
+                    "CN": "testpost",
+                },
+                "profile": "non-standard",
+            }
         },
         "output": {
             "cert": "server.pem",
