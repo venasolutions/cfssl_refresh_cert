@@ -33,6 +33,19 @@ Example config.json:
       }
     }
 
+Signing profile can be added to the `cfssl` entry:
+
+    {
+      "cfssl": {
+        "url": "http://127.0.0.1:8888",
+        "request": {
+            ...
+        },
+        "profile": "non-default"
+      },
+      ...
+    }
+
 Add the "auth" entry in cfssl to use HTTP basic auth:
 
     "auth": {
