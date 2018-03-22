@@ -33,6 +33,23 @@ Example config.json:
       }
     }
 
+Alternatively, specify the whole POST body with the `post_body` field:
+
+    {
+      "cfssl": {
+        "url": "http://127.0.0.1:8888",
+        "post_body": {
+            "request": {
+                ...
+            },
+            "profile": "non-default"
+        }
+      },
+      ...
+    }
+
+Optional parameters can be added to `post_body` this way (profile is shown).
+
 Add the "auth" entry in cfssl to use HTTP basic auth:
 
     "auth": {
