@@ -75,8 +75,8 @@ def test_cfssl_ok():
             json.dumps({"request": {"CN": "testpost"}})
 
         # assert data is correctly written
-        refresher._write_out_cert_files.assert_called_with("cfssl cert",
-                                                           "cfssl key")
+        refresher._write_out_cert_files.assert_called_with(\
+                json_response["result"])
 
 
 def test_cfssl_ok_with_post_body():
@@ -206,8 +206,8 @@ def test_cfssl_ok_with_auth():
             basic_auth
 
         # assert data is correctly written
-        refresher._write_out_cert_files.assert_called_with("cfssl cert",
-                                                           "cfssl key")
+        refresher._write_out_cert_files.assert_called_with(\
+                json_response["result"])
 
 
 def test_cfssl_writes():
@@ -225,9 +225,47 @@ def test_cfssl_writes():
 
     with mock.patch("cfssl_refresh_cert.open", mocked_open, create=True), \
             mock.patch("cfssl_refresh_cert.os", mocked_os):
-        refresher._write_out_cert_files("cert", "key")
+        refresher._write_out_cert_files({
+                "certificate": "cert",
+                "private_key": "key"
+                })
 
     mocked_open.assert_has_calls([mock.call("server.pem", "w"),
+                                  mock.call().write("cert"),
+                                  mock.call().__exit__(None, None, None),
+                                  mock.call("server-key.pem", "w"),
+                                  mock.call().write("key"),
+                                  mock.call().__exit__(None, None, None)],
+                                 any_order=True)
+
+    mocked_os.assert_has_calls([mock.call.chmod("server-key.pem", 0600)])
+
+
+def test_cfssl_writes_bundles():
+    """Test that CFSSLRefreshCert writes out the bundle if appropriate."""
+    refresher = CFSSLRefreshCert()
+    refresher.config = {
+        "output": {
+            "bundle": "bundle.pem",
+            "cert": "server.pem",
+            "key": "server-key.pem"
+        }
+    }
+
+    mocked_open = mock.mock_open()
+    mocked_os = mock.MagicMock()
+
+    with mock.patch("cfssl_refresh_cert.open", mocked_open, create=True), \
+            mock.patch("cfssl_refresh_cert.os", mocked_os):
+        refresher._write_out_cert_files({
+                "bundle": "bundle",
+                "certificate": "cert",
+                "private_key": "key"
+                })
+
+    mocked_open.assert_has_calls([mock.call("bundle.pem", "w"),
+                                  mock.call().write("bundle"),
+                                  mock.call("server.pem", "w"),
                                   mock.call().write("cert"),
                                   mock.call().__exit__(None, None, None),
                                   mock.call("server-key.pem", "w"),
@@ -445,8 +483,8 @@ def test_ca_bundle():
             json.dumps({"request": {"CN": "testpost"}})
 
         # assert data is correctly written
-        refresher._write_out_cert_files.assert_called_with("cfssl cert",
-                                                           "cfssl key")
+        refresher._write_out_cert_files.assert_called_with(\
+                json_response["result"])
         req = m.request_history[0]
         assert req.verify == "/etc/ssl/certs/ca-certificates.crt"
 
