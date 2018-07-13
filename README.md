@@ -33,6 +33,14 @@ Example config.json:
       }
     }
 
+Optionally, "output" can include a "bundle" target:
+
+      "output": {
+        "bundle": "bundle.pem",
+        "cert": "server.pem",
+        "key": "server-key.pem"
+      }
+
 Alternatively, specify the whole POST body with the `post_body` field:
 
     {

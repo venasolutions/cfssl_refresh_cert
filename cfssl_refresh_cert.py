@@ -73,8 +73,7 @@ class CFSSLRefreshCert(object):
 
         r = resp.json()
 
-        self._write_out_cert_files(r["result"]["certificate"],
-                                   r["result"]["private_key"])
+        self._write_out_cert_files(r["result"])
 
         if "onsuccess" in self.config:
             if "execute_command" in self.config["onsuccess"]:
@@ -104,12 +103,16 @@ class CFSSLRefreshCert(object):
 
         return True
 
-    def _write_out_cert_files(self, certificate, private_key):
+    def _write_out_cert_files(self, result):
+        if "bundle" in self.config["output"]:
+            with open(self.config["output"]["bundle"], "w") as fp:
+                fp.write(result["bundle"])
+
         with open(self.config["output"]["cert"], "w") as fp:
-            fp.write(certificate)
+            fp.write(result["certificate"])
 
         with open(self.config["output"]["key"], "w") as fp:
-            fp.write(private_key)
+            fp.write(result["private_key"])
 
         os.chmod(self.config["output"]["key"], 0600)
 
