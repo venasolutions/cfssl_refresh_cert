@@ -52,7 +52,7 @@ class CFSSLRefreshCert(object):
             resp = requests.post(url, json=d, **kwargs)
             resp.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print "cfssl refresh failed! {}".format(e)
+            print("cfssl refresh failed! {}".format(e))
 
             if "onfailure" in self.config:
                 if "post_to_slack" in self.config["onfailure"]:
@@ -114,7 +114,7 @@ class CFSSLRefreshCert(object):
         with open(self.config["output"]["key"], "w") as fp:
             fp.write(result["private_key"])
 
-        os.chmod(self.config["output"]["key"], 0600)
+        os.chmod(self.config["output"]["key"], 0o600)
 
     def _get_machine_info(self):
         """Return hostname, private IP, and public IP."""
