@@ -238,7 +238,7 @@ def test_cfssl_writes():
                                   mock.call().__exit__(None, None, None)],
                                  any_order=True)
 
-    mocked_os.assert_has_calls([mock.call.chmod("server-key.pem", 0600)])
+    mocked_os.assert_has_calls([mock.call.chmod("server-key.pem", 0o600)])
 
 
 def test_cfssl_writes_bundles():
@@ -273,7 +273,7 @@ def test_cfssl_writes_bundles():
                                   mock.call().__exit__(None, None, None)],
                                  any_order=True)
 
-    mocked_os.assert_has_calls([mock.call.chmod("server-key.pem", 0600)])
+    mocked_os.assert_has_calls([mock.call.chmod("server-key.pem", 0o600)])
 
 
 def test_get_machine_info_ok():
